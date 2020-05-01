@@ -23,7 +23,7 @@ var Key = {
 };
 
 
-
+let lastTime = 0;
 
 class Tetris {
 	constructor() {
@@ -45,8 +45,19 @@ class Tetris {
 			'#17f1cd',
 		];
 
-		this.ctx.scale(20, 20);
+		this.score = 0;
+		this.level = 0;
+		this.lines = 0;
+
+		
 		this.init();
+	}
+
+	init() {
+		this.ctx.scale(20, 20);
+
+		this.renderMatrix(this.player.matrix, this.player.pos);
+		this.setTimer();
 
 		window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
 		window.addEventListener('keydown', (event) => { 
@@ -55,22 +66,33 @@ class Tetris {
 		 }, false);
 
 		this.onKey();		// Запускаем цикл для отслеживания клавиш движения
+
+	}
+	
+	// А это надо как-то в reqAnimFrame
+	setTimer(now) {
+	// each 2 seconds call the createNewObject() function
+	if(!lastTime || now - lastTime >= 1000) {
+		lastTime = now;
+		// createNewObject();
+		this.player.move(0);
+	
+	}
+	requestAnimationFrame(this.setTimer.bind(this));
+	// renderer.render(scene, camera);
+		this.update();
 	}
 
-	init() {
-		this.renderMatrix(this.player.matrix, this.player.pos);
-		this.setTimer();
-	}
+
+	// setTimer() {
+	// 	this.gameTimer = setInterval(() => { 
+	// 		this.player.move(0);
+	// 		this.update();
+	// 	}, 1000)
+	// }
 	
-	setTimer() {
-		this.gameTimer = setInterval(() => { 
-			this.player.move(0);
-			this.update();
-		}, 1000)
-	}
-	
-	stopTimer() {
-		clearInterval(this.gameTimer);
+	stopInterval(interval) {
+		clearInterval(interval);
 	}
 	
 	update() {
@@ -79,22 +101,37 @@ class Tetris {
 		this.renderMatrix(this.player.matrix, this.player.pos);
 	}
 
-	onKey() {
+
+
+	// onKey(now) {
+	// 	if(!lastTime || now - lastTime >= 70) {
+	// 		lastTime = now;
+	// 		// createNewObject();
+	// 		this.moveHotKeys()
+	// 	}
+	// 	requestAnimationFrame(this.onKey.bind(this));
+	// }
+
+	
+	// Попробую эту оставить с setInterval-ом
+	onKey = () => {
 		setInterval(() => {
 			console.log('kkkk')
 			this.moveHotKeys()
-		}, 70)
+			// requestAnimationFrame(this.onKey);
+		}, 50)
 	}
 
 
 	moveHotKeys() {
-		if (Key.isDown(Key.MOVE_RIGHT)) this.player.move(1);
-		if (Key.isDown(Key.MOVE_LEFT)) this.player.move(-1);
+		// if (Key.isDown(Key.MOVE_RIGHT)) this.player.move(1);
+		// if (Key.isDown(Key.MOVE_LEFT)) this.player.move(-1);
 		if (Key.isDown(Key.MOVE_DOWN)) this.player.move(0);
 
 		if (
-			Key.isDown(Key.MOVE_RIGHT) ||
-			Key.isDown(Key.MOVE_LEFT) ||
+			// Key.isDown(Key.MOVE_RIGHT) ||
+			// Key.isDown(Key.MOVE_LEFT) 
+			// ||
 			Key.isDown(Key.MOVE_DOWN)
 		) this.update();
 	}
@@ -111,9 +148,14 @@ class Tetris {
 			case 69: 	// E
 				this.player.rotate(1);
 				break;
-			default: return;
+			case 68: 	// D
+				this.player.move(1);
+				break;
+			case 65: 	// A
+				this.player.move(-1);
+				break;
+			default: return;	
 		}
-
 		this.update();
 	}
 

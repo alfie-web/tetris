@@ -77,7 +77,7 @@ class Player {
 	}
 
 	resetPos() {
-		return { x: 0, y: 0 };
+		return { x: (this.field.width / 2 | 0) - (this.matrix.length / 2 | 0), y: 0 };
 	}
 
 	move(dir) {
@@ -95,6 +95,7 @@ class Player {
 				this.field.merge(this);
 				// merge, и ресет игрока (вместо ресета выбираем следующего из массива)
 				this.updatePieces();
+				this.field.sweep();
 			}
 
 		}

@@ -50,4 +50,27 @@ class Field {
 			}
 		}
 	}
+
+	// Удаляет заполненные ряды
+	sweep() {
+		let linesCount = 1;	// Для подсчёта комбо
+		let score = 0;
+
+		outer: for (let y = this.height - 1; y > 0; y--) {
+			for (let x = 0; x < this.width; x++) {
+				// console.log(y, x)
+				if (this.matrix[y][x] === 0) continue outer;
+			}
+
+			linesCount++;
+			this.matrix.splice(y, 1);
+			this.matrix.unshift(new Array(this.width).fill(0));
+			++y;
+
+			// score += linesCount * 10;
+			// linesCount *= 2;
+		}
+
+		return score;
+	}
 }
