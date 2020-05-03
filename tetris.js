@@ -1,4 +1,3 @@
-
 var Key = {
 	_pressed: {},
       
@@ -30,91 +29,90 @@ class Tetris {
 		// TODO: СОздавать канвасы динамически
 		this.canvas = document.getElementById('game');
 		this.statsCanvas = document.querySelector('.view');
-		// this.ctx = this.canvas.getContext('2d');
-		// this.viewCtx = this.viewCanvas.getContext('2d');
-		this.gameView = new View(this.canvas);
-		this.statsView = new View(this.statsCanvas);
+
+		this.gameView = new View(this.canvas, 20);
+		this.statsView = new View(this.statsCanvas, 10);
 
 		this.field = new Field(10, 20);
 		this.player = new Player(this, this.field);
 
-		this.gameTimer = null;
-		this.colors = [
-			null,
-			'#e7072d',
-			'#014cd6',
-			'#d6c101',
-			'#01d541',
-			'#ae07d8',
-			'#f17917',
-			'#17f1cd',
-		];
+		this.timer = null;
+		this.moveDownKey = false;
 
 		this.score = 0;
-		this.level = 0;
 		this.lines = 0;
+		this.level = 0;
 
-		
 		this.init();
 	}
 
 	init() {
-		this.ctx.scale(20, 20);
-		this.viewCtx.scale(10, 10);
+		// этот код не работает, все начинает работать только внизу функции render
+		// this.gameView.renderMatrix(this.player.matrix, this.player.pos);
+		// this.statsView.renderText('Фигуры', { x: 2, y: 15 });
+		this.renderStats();
+		
+		this.update();
 
-		this.renderMatrix(this.ctx, this.player.matrix, this.player.pos);
-		this.setTimer();
-
-		window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
+		// window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
 		window.addEventListener('keydown', (event) => { 
 			Key.onKeydown(event);
 			this.actionsHotKeys(event);
-		 }, false);
+		}, false);
 
-		this.onKey();		// Запускаем цикл для отслеживания клавиш движения
-
+		// this.onKey();		// Запускаем цикл для отслеживания клавиш движения
 	}
 	
 	// А это надо как-то в reqAnimFrame
-	setTimer(now) {
-		// each 2 seconds call the createNewObject() function
-		if(!lastTime || now - lastTime >= 1000) {
+	update(now) {
+		// console.log(1000 / (this.level + 1))
+		if(!lastTime || now - lastTime >= 1000 / (this.level + 1)) {
 			lastTime = now;
 			this.player.move(0);
 		}
-		requestAnimationFrame(this.setTimer.bind(this));
-		this.update();
+		requestAnimationFrame(this.update.bind(this));
+		this.render();
 	}
 
+	updateScore(score, lines) {
+		this.score += score;
+		this.lines += lines;
+
+		this.level = Math.floor(this.lines * 0.1);	// Каждые 100 линий новый левел
+	}
+
+	clearScore() {
+		this.score = 0;
+		this.lines = 0;
+		this.level = 0;
+	}
 
 	
-	update() {
-		this.clearField(this.ctx, 'black');
-		this.clearField(this.viewCtx, '#0b0b0f');
-		this.renderMatrix(this.ctx, this.field.matrix, { x: 0, y: 0 });
-		this.renderMatrix(this.ctx, this.player.matrix, this.player.pos);
+	render() {
+		this.gameView.clear();
 
-		this.renderMatrix(this.viewCtx, this.player.matrix, { x: 2, y: 0 });
-		this.renderPendingPieces();
+		this.gameView.renderMatrix(this.field.matrix, { x: 0, y: 0 });
+		this.gameView.renderMatrix(this.player.matrix, this.player.pos);
+
+		this.renderStats();
 	}
 
 
 	// Блин из за одного действия такая жопа
-	onKey = () => {
-		setInterval(() => {
-			console.log('kkkk')
-			this.moveHotKeys()
-			// requestAnimationFrame(this.onKey);
-		}, 50)
-	}
+	// onKey = () => {
+	// 		this.timer = setInterval(() => {
+	// 			console.log('kkkk')
+	// 			this.moveHotKeys()
+	// 		}, 50)
+	// }
 
 
-	moveHotKeys() {
-		if (Key.isDown(Key.MOVE_DOWN)) {
-			this.player.move(0);
-			this.update()
-		}
-	}
+	// moveHotKeys() {
+	// 	if (Key.isDown(Key.MOVE_DOWN)) {
+	// 		this.player.move(0);
+	// 		this.render();
+	// 	}
+	// }
 
 	actionsHotKeys(event) {
 		switch (event.keyCode) {
@@ -133,30 +131,48 @@ class Tetris {
 			case 65: 	// A
 				this.player.move(-1);
 				break;
+			case 83: 	// S
+			this.moveDownKey = true;
+				this.player.move(0);
+				break;
 			default: return;	
 		}
-		this.update();
+		this.render();
+	}
+
+
+	renderStats() {
+		this.statsView.clear('#0b0b0f');
+		this.statsView.renderText('Фигуры:', { x: 2, y: 1 });
+		this.statsView.renderMatrix(this.player.matrix, { x: 2, y: 2 });
+		this.renderPendingPieces();
+
+		this.statsView.renderText('Очки:', { x: 2, y: 18 });
+		this.statsView.renderText(this.score, { x: 2, y: 20 });
+		this.statsView.renderText('Линий:', { x: 2, y: 23 });
+		this.statsView.renderText(this.lines, { x: 2, y: 25 });
+		this.statsView.renderText('Уровень:', { x: 2, y: 28 });
+		this.statsView.renderText(this.level, { x: 2, y: 30 });
 	}
 
 	renderPendingPieces() {
 		this.player.pieces.forEach((matrix, i) => {
-			if (i !== 0) this.renderMatrix(this.viewCtx, matrix, { x: 2, y: (4 + 1) * i });
-		});
-	}
-
-	clearField(ctx, color) {
-		ctx.fillStyle = color;
-		ctx.fillRect(0, 0, 240, 400);
-	}
-	
-	renderMatrix(ctx, matrix, offset) {
-		matrix.forEach((row, y) => {
-			row.forEach((block, x) => {
-				if (block > 0) {
-					ctx.fillStyle = this.colors[block];
-					ctx.fillRect(x + offset.x, y + offset.y, 1, 1);
-				}
-			});
+			if (i !== 0) this.statsView.renderMatrix(matrix, { x: 2, y: 2 + (5* i) });
 		});
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

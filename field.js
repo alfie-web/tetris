@@ -53,7 +53,7 @@ class Field {
 
 	// Удаляет заполненные ряды (Посмотреть как codeDojo это делал)
 	sweep() {
-		let linesCount = 1;	// Для подсчёта комбо
+		let linesCount = 0;	// Для подсчёта комбо
 		let score = 0;
 
 		outer: for (let y = this.height - 1; y > 0; y--) {
@@ -71,9 +71,8 @@ class Field {
 			// linesCount *= 2;
 		}
 
-		score += (linesCount ** 2) * 100;	// 1 - 200, 2 - 400, 3 - 900, 4 - 1600
-		// score += (linesCount * 100) * linesCount	
+		score += (linesCount ** 2) * 100;	// 1 - 100, 2 - 400, 3 - 900, 4 - 1600
 
-		return score;
+		return { score, lines: linesCount };
 	}
 }

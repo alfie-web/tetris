@@ -70,8 +70,9 @@ class Player {
 
 		if (this.field.collide(this)) {
 			console.log('GAME OVER');
-			// По идее алертим очки игрока, уровень, и количество линий
+			alert('Очки: ' + this.tetris.score + ', Линии: ' + this.tetris.lines);
 
+			this.tetris.clearScore();
 			this.field.createMatrix(this.field.width, this.field.height);	// Должен бить какой-то ресет
 		}
 	}
@@ -84,18 +85,21 @@ class Player {
 		if (dir !== 0) {
 			this.pos.x += dir;
 			if (this.field.collide(this)) {
-				console.log('has collision');
+				// console.log('has collision');
 				this.pos.x -= dir;
 			}
 		} else {
 			this.pos.y += 1;
 			if (this.field.collide(this)) {
-				console.log('merge');
+				// console.log('merge');
 				this.pos.y -= 1;
 				this.field.merge(this);
-				// merge, и ресет игрока (вместо ресета выбираем следующего из массива)
+
 				this.updatePieces();
-				this.field.sweep();
+				
+				let stats = this.field.sweep();
+				this.tetris.updateScore(stats.score, stats.lines);
+
 			}
 
 		}
