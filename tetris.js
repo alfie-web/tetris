@@ -25,36 +25,34 @@ var Key = {
 let lastTime = 0;
 
 class Tetris {
-	constructor() {
+	constructor(fieldCanvas, statsCanvas, hotKeys) {
 		// TODO: СОздавать канвасы динамически
-		this.canvas = document.getElementById('game');
-		this.statsCanvas = document.querySelector('.view');
+		// this.canvas = document.getElementById('game');
+		// this.statsCanvas = document.querySelector('.view');
+		this.hotKeys = hotKeys;
 
-		this.gameView = new View(this.canvas, 20);
-		this.statsView = new View(this.statsCanvas, 10);
+		this.gameView = new View(fieldCanvas, 20);
+		this.statsView = new View(statsCanvas, 10);
 
 		this.field = new Field(10, 20);
 		this.player = new Player(this, this.field);
-
-		this.timer = null;
-		this.moveDownKey = false;
 
 		this.score = 0;
 		this.lines = 0;
 		this.level = 0;
 
+		// this.createTetrisElement();
+		
+
 		this.init();
 	}
 
 	init() {
-		// этот код не работает, все начинает работать только внизу функции render
-		// this.gameView.renderMatrix(this.player.matrix, this.player.pos);
-		// this.statsView.renderText('Фигуры', { x: 2, y: 15 });
-		this.renderStats();
+		// this.renderStats();
 		
 		this.update();
 
-		// window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
+		window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
 		window.addEventListener('keydown', (event) => { 
 			Key.onKeydown(event);
 			this.actionsHotKeys(event);
@@ -63,15 +61,20 @@ class Tetris {
 		// this.onKey();		// Запускаем цикл для отслеживания клавиш движения
 	}
 	
-	// А это надо как-то в reqAnimFrame
+	// update(now) {
+	// 	if(!lastTime || now - lastTime >= 1000 / (this.level + 1)) {
+	// 		lastTime = now;
+	// 		this.player.move(0);
+	// 	}
+	// 	requestAnimationFrame(this.update.bind(this));
+	// 	this.render();
+	// }
+
 	update(now) {
-		// console.log(1000 / (this.level + 1))
-		if(!lastTime || now - lastTime >= 1000 / (this.level + 1)) {
-			lastTime = now;
+		setInterval(() => {
 			this.player.move(0);
-		}
-		requestAnimationFrame(this.update.bind(this));
-		this.render();
+			this.render();
+		}, 1000)
 	}
 
 	updateScore(score, lines) {
@@ -100,10 +103,10 @@ class Tetris {
 
 	// Блин из за одного действия такая жопа
 	// onKey = () => {
-	// 		this.timer = setInterval(() => {
-	// 			console.log('kkkk')
-	// 			this.moveHotKeys()
-	// 		}, 50)
+	// 	setInterval(() => {
+	// 		// console.log('kkkk')
+	// 		this.moveHotKeys()
+	// 	}, 50)
 	// }
 
 
@@ -115,24 +118,24 @@ class Tetris {
 	// }
 
 	actionsHotKeys(event) {
+		const {moveRight, moveLeft, moveDown, change, rotateLeft, rotateRight} = this.hotKeys;
 		switch (event.keyCode) {
-			case 87: 	// W
+			case change: 	// W
 				this.player.change();
 				break;
-			case 81: 	// Q
+			case rotateLeft: 	// Q
 				this.player.rotate(-1);
 				break;
-			case 69: 	// E
+			case rotateRight: 	// E
 				this.player.rotate(1);
 				break;
-			case 68: 	// D
+			case moveRight: 	// D
 				this.player.move(1);
 				break;
-			case 65: 	// A
+			case moveLeft: 	// A
 				this.player.move(-1);
 				break;
-			case 83: 	// S
-			this.moveDownKey = true;
+			case moveDown: 	// S
 				this.player.move(0);
 				break;
 			default: return;	
@@ -160,6 +163,12 @@ class Tetris {
 			if (i !== 0) this.statsView.renderMatrix(matrix, { x: 2, y: 2 + (5* i) });
 		});
 	}
+
+
+
+	
+
+
 }
 
 

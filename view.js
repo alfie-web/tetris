@@ -37,4 +37,13 @@ class View {
 		this.ctx.fillStyle = "white";
 		this.ctx.fillText(text, pos.x, pos.y);
 	}
+
+
+
+
 }
+
+{/* <div class="game">
+		<canvas id="game" class="field" width="200" height="400"></canvas>
+		<canvas class="view" width="150" height="400"></canvas>
+	</div> */}

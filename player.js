@@ -70,7 +70,7 @@ class Player {
 
 		if (this.field.collide(this)) {
 			console.log('GAME OVER');
-			alert('Очки: ' + this.tetris.score + ', Линии: ' + this.tetris.lines);
+			// alert('Очки: ' + this.tetris.score + ', Линии: ' + this.tetris.lines);
 
 			this.tetris.clearScore();
 			this.field.createMatrix(this.field.width, this.field.height);	// Должен бить какой-то ресет
