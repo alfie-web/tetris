@@ -5,7 +5,9 @@ class Player {
 
 		this.pieces = this.createPieces();
 		this.matrix = this.pieces[0];	// тукущая фигура
+		this.hint = this.matrix;
 		this.pos = this.resetPos();
+		this.hintPos = { x: this.pos.x, y: 16 };
 	}
 
 	// TODO: Поработать с неймингом методов
@@ -65,10 +67,12 @@ class Player {
 		this.pieces.splice(0, 1);
 		this.pieces.push(this.getRandomPiece());
 		this.matrix = this.pieces[0];
+		this.hint = this.pieces[0];
 
 		this.pos = this.resetPos();
+		// this.hintPos = this.resetPos();
 
-		if (this.field.collide(this)) {
+		if (this.field.collide(this.matrix, this.pos)) {
 			console.log('GAME OVER');
 			// alert('Очки: ' + this.tetris.score + ', Линии: ' + this.tetris.lines);
 
@@ -82,15 +86,17 @@ class Player {
 	}
 
 	move(dir) {
+		// this.calcHintPos()
+
 		if (dir !== 0) {
 			this.pos.x += dir;
-			if (this.field.collide(this)) {
+			if (this.field.collide(this.matrix, this.pos)) {
 				// console.log('has collision');
 				this.pos.x -= dir;
 			}
 		} else {
 			this.pos.y += 1;
-			if (this.field.collide(this)) {
+			if (this.field.collide(this.matrix, this.pos)) {
 				// console.log('merge');
 				this.pos.y -= 1;
 				this.field.merge(this);
@@ -113,7 +119,9 @@ class Player {
 			this.matrix = this.reverseArr(this.transposeArr(this.matrix));
 		}
 
-		while ( this.field.collide(this) ) {
+		this.hint = this.matrix;
+
+		while ( this.field.collide(this.matrix, this.pos) ) {
 			console.log('while')
 
 			if ( this.matrix.length + this.pos.y > this.field.height	// Когда с полом
@@ -131,11 +139,22 @@ class Player {
 		}
 	}
 
+	calcHintPos() {
+		this.hintPos.y = 20;
+		while(this.field.collide(this.hint, { x: this.pos.x, y: this.hintPos.y })) {
+			console.log('check hint ')
+			this.hintPos.y--;
+		}
+
+		return this.hintPos.y
+	}
+
 	change() {
 		console.log(this.pieces);
 		const cur = this.pieces.splice(0, 1);
 		this.pieces.push(cur[0]);
 		this.matrix = this.pieces[0];
+		this.hint = this.matrix;
 	}
 
 

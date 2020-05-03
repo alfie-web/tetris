@@ -33,6 +33,20 @@ class View {
 		});
 	}
 
+	renderHint(matrix, pos) {
+		matrix.forEach((row, y) => {
+			row.forEach((block, x) => {
+				if (block > 0) {
+					this.ctx.strokeRect(x + pos.x, y + pos.y, 1, 1);
+					this.ctx.lineWidth = 0.1;
+					this.ctx.fillStyle = 'black';
+					this.ctx.fillRect(x + pos.x + 0.1, y + pos.y + 0.1, 0.8, 0.8);
+					this.ctx.strokeStyle = this.colors[block];
+				}
+			});
+		});
+	}
+
 	renderText(text, pos) {
 		this.ctx.fillStyle = "white";
 		this.ctx.fillText(text, pos.x, pos.y);

@@ -8,14 +8,14 @@ game.create({
 	rotateLeft: 81, //Q
 	rotateRight: 69, //E
 });
-game.create({
-	moveRight: 75, //K
-	moveLeft: 72, //H
-	moveDown: 74, //J
-	change: 85, //U
-	rotateLeft: 89, //Y
-	rotateRight: 73, //I
-});
+// game.create({
+// 	moveRight: 75, //K
+// 	moveLeft: 72, //H
+// 	moveDown: 74, //J
+// 	change: 85, //U
+// 	rotateLeft: 89, //Y
+// 	rotateRight: 73, //I
+// });
 
 
 // TODO: 
@@ -29,3 +29,6 @@ game.create({
 // Создание нескольких инстансов игры
 
 // TODO: ВООБЩЕ ДЛЯ ВСЕХ ОТРИСОВОК СДЕЛАТЬ ОТДЕЛЬНЫЙ КЛАСС
+
+
+// TODO: Поправить баг с коллизией при смене фигуры

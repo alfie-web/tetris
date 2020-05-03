@@ -74,7 +74,7 @@ class Tetris {
 		setInterval(() => {
 			this.player.move(0);
 			this.render();
-		}, 1000)
+		}, 1000 / (this.level + 1))
 	}
 
 	updateScore(score, lines) {
@@ -95,6 +95,8 @@ class Tetris {
 		this.gameView.clear();
 
 		this.gameView.renderMatrix(this.field.matrix, { x: 0, y: 0 });
+		// this.gameView.renderHint(this.player.hint, { x: this.player.pos.x, y: this.player.hintPos.y });
+		this.gameView.renderHint(this.player.hint, { x: this.player.pos.x, y: this.player.calcHintPos() });
 		this.gameView.renderMatrix(this.player.matrix, this.player.pos);
 
 		this.renderStats();
@@ -148,6 +150,7 @@ class Tetris {
 		this.statsView.clear('#0b0b0f');
 		this.statsView.renderText('Фигуры:', { x: 2, y: 1 });
 		this.statsView.renderMatrix(this.player.matrix, { x: 2, y: 2 });
+		// this.statsView.renderHint(this.player.hint, { x: 2, y: 30 });
 		this.renderPendingPieces();
 
 		this.statsView.renderText('Очки:', { x: 2, y: 18 });

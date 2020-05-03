@@ -21,8 +21,8 @@ class Field {
 	}
 
 	// Проверяет сталкивается ли игрок (фигура) с границами поля или с замержеными фигурами
-	collide(player) {	// player
-		const { matrix, pos } = player;
+	collide(matrix, pos) {	// player
+		// const { matrix, pos } = player;
 
 		for (let y = 0; y < matrix.length; y++) {
 			for (let x = 0; x < matrix[y].length; x++) {
