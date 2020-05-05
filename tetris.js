@@ -22,7 +22,7 @@ var Key = {
 };
 
 
-let lastTime = 0;
+
 
 class Tetris {
 	constructor(fieldCanvas, statsCanvas, hotKeys) {
@@ -42,15 +42,24 @@ class Tetris {
 		this.level = 0;
 
 		// this.createTetrisElement();
-		
+		let lastTime = 0;
+		const update = (now) => {
+			if(!lastTime || now - lastTime >= 1000 / (this.level + 1)) {
+				lastTime = now;
+				this.player.move(0);
+			}
+			requestAnimationFrame(update);
+			this.render();
+		}
 
+		update();
 		this.init();
 	}
 
 	init() {
 		// this.renderStats();
 		
-		this.update();
+		// this.update();
 
 		window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
 		window.addEventListener('keydown', (event) => { 
@@ -70,12 +79,13 @@ class Tetris {
 	// 	this.render();
 	// }
 
-	update(now) {
-		setInterval(() => {
-			this.player.move(0);
-			this.render();
-		}, 1000 / (this.level + 1))
-	}
+	// Если всё-таки вернусь к этой версии, то чтобы применялось ускорение, надо где-то останавливать таймер и снова запускать
+	// update(now) {
+	// 	setInterval(() => {
+	// 		this.player.move(0);
+	// 		this.render();
+	// 	}, 1000 / (this.level + 1))
+	// }
 
 	updateScore(score, lines) {
 		this.score += score;
@@ -95,8 +105,8 @@ class Tetris {
 		this.gameView.clear();
 
 		this.gameView.renderMatrix(this.field.matrix, { x: 0, y: 0 });
-		// this.gameView.renderHint(this.player.hint, { x: this.player.pos.x, y: this.player.hintPos.y });
-		this.gameView.renderHint(this.player.hint, { x: this.player.pos.x, y: this.player.calcHintPos() });
+		this.gameView.renderHint(this.player.hint, { x: this.player.pos.x, y: this.player.hintPos.y });
+		// this.gameView.renderHint(this.player.hint, { x: this.player.pos.x, y: this.player.calcHintPos() });	// Не вариант, жрёт 
 		this.gameView.renderMatrix(this.player.matrix, this.player.pos);
 
 		this.renderStats();
@@ -120,24 +130,25 @@ class Tetris {
 	// }
 
 	actionsHotKeys(event) {
-		const {moveRight, moveLeft, moveDown, change, rotateLeft, rotateRight} = this.hotKeys;
+		// const {moveRight, moveLeft, moveDown, change, rotateLeft, rotateRight} = this.hotKeys;
+
 		switch (event.keyCode) {
-			case change: 	// W
+			case 87: 	// W
 				this.player.change();
 				break;
-			case rotateLeft: 	// Q
+			case 81: 	// Q
 				this.player.rotate(-1);
 				break;
-			case rotateRight: 	// E
+			case 69: 	// E
 				this.player.rotate(1);
 				break;
-			case moveRight: 	// D
+			case 68: 	// D
 				this.player.move(1);
 				break;
-			case moveLeft: 	// A
+			case 65: 	// A
 				this.player.move(-1);
 				break;
-			case moveDown: 	// S
+			case 83: 	// S
 				this.player.move(0);
 				break;
 			default: return;	

@@ -77,7 +77,7 @@ class Player {
 			// alert('Очки: ' + this.tetris.score + ', Линии: ' + this.tetris.lines);
 
 			this.tetris.clearScore();
-			this.field.createMatrix(this.field.width, this.field.height);	// Должен бить какой-то ресет
+			this.field.matrix = this.field.createMatrix(this.field.width, this.field.height);	// Должен бить какой-то ресет
 		}
 	}
 
@@ -137,10 +137,13 @@ class Player {
 				this.pos.x--;
 			}
 		}
+
+		// this.calcHintPos()
 	}
 
 	calcHintPos() {
 		this.hintPos.y = 20;
+		// TODO: Вместо while попробовать for так как там будет четкое количество итераций
 		while(this.field.collide(this.hint, { x: this.pos.x, y: this.hintPos.y })) {
 			console.log('check hint ')
 			this.hintPos.y--;
@@ -155,6 +158,8 @@ class Player {
 		this.pieces.push(cur[0]);
 		this.matrix = this.pieces[0];
 		this.hint = this.matrix;
+
+		// this.calcHintPos()
 	}
 
 

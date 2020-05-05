@@ -3,9 +3,7 @@ class Field {
 		this.width = width;
 		this.height = height;
 		// this.matrix = this.createMatrix(this.width, this.height);
-		this.matrix = [];
-
-		this.createMatrix(this.width, this.height);
+		this.matrix = this.createMatrix(this.width, this.height);
 	}
 
 	// Создат поле и ресетает
@@ -17,7 +15,8 @@ class Field {
 				matrix[i][j] = 0;
 			}
 		}
-		this.matrix = matrix;
+		// this.matrix = matrix;
+		return matrix;
 	}
 
 	// Проверяет сталкивается ли игрок (фигура) с границами поля или с замержеными фигурами
